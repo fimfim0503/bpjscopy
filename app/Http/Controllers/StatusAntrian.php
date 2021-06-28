@@ -193,27 +193,14 @@ class StatusAntrian extends Controller
       
       //sisawaktutunggu
        
-     
+      $checkTime = strtotime('09:00:59');
+      $time1= date('H:i:s', $checkTime);
+      
+      
+      $loginTime = strtotime('09:01:00');
+      $diff = $waktu - $loginTime;
+      
     
-
-        // $waktusekarang=date("Y:m:d H:i:s", $waktu);
-        // $waktuperiksapasien=date("Y:m:d H:i:s",($waktuperiksa2/1000));
-        
-        $waktusekarang=strtotime("Y:m:d H:i:s", $waktu);
-        $waktuperiksapasien=strtotime("Y:m:d H:i:s",($waktuperiksa2/1000));
-        $time3=$waktuperiksa2-$waktu;
-
-        
-
-        $waktusekarang2=new DateTime($waktusekarang);
-        $waktuperiksapasien2=new DateTime($waktuperiksapasien);
-       
-        //mesti diperbaiki
-        // ->format("%d hari, %h jam and %i menit");
-        $diff  =  date_diff( $waktuperiksapasien2, $waktusekarang2)->format("%d hari, %h jam and %i menit");;
-
-       
-
        //get antreanpanggil
        $antreanpanggil3=Antrian::where('tanggalperiksa','=',$tglperiksa2)
        ->where('kodepoli','=', $kodepoli2)
