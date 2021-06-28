@@ -196,16 +196,23 @@ class StatusAntrian extends Controller
      
     
 
-        $waktusekarang=date("Y:m:d H:i:s", $waktu);
-        $waktuperiksapasien=date("Y:m:d H:i:s",($waktuperiksa2/1000));
+        // $waktusekarang=date("Y:m:d H:i:s", $waktu);
+        // $waktuperiksapasien=date("Y:m:d H:i:s",($waktuperiksa2/1000));
+        
+        $waktusekarang=strtotime("Y:m:d H:i:s", $waktu);
+        $waktuperiksapasien=strtotime("Y:m:d H:i:s",($waktuperiksa2/1000));
+        $time3=$waktuperiksa2-$waktu;
+
+        
 
         $waktusekarang2=new DateTime($waktusekarang);
         $waktuperiksapasien2=new DateTime($waktuperiksapasien);
        
         //mesti diperbaiki
-        $diff  =  date_diff( $waktuperiksapasien2, $waktusekarang2)->format("%i");
+        // ->format("%d hari, %h jam and %i menit");
+        $diff  =  date_diff( $waktuperiksapasien2, $waktusekarang2)->format("%d hari, %h jam and %i menit");;
 
-        
+       
 
        //get antreanpanggil
        $antreanpanggil3=Antrian::where('tanggalperiksa','=',$tglperiksa2)
@@ -220,7 +227,7 @@ class StatusAntrian extends Controller
                  "namadokter"=>$namadokter2,
                  "sisaantrean"=> $sisaantri,
                  "antreanpanggil"=>$kodeantri2."-".$antreanpanggil3,
-                 "test"=>$waktuperiksapasien,
+                // "test"=>$waktu,
                  "waktutunggu"=>$diff,
                  "keterangan"=>"",
              ]), "metadata"=>([
@@ -230,5 +237,46 @@ class StatusAntrian extends Controller
         ]);
 
           
+    }
+
+    //batal antrian 
+    public function batalantrian(request $request)
+    {
+        DB::table('no_antrian_ruangan')->where('kodebooking',$request->kodebooking)->update([
+            'checkin' => 2,
+            'keterangan'=>$request->keterangan,
+        ]);
+        return response()->json([
+            "response"=>([
+                "metadata"=>([
+                    "message"=>"ok",
+                    "code"=>200
+                ])
+            ])
+                ]);
+
+    }
+
+    //checkin
+    public function checkin(request $request)
+    {
+        DB::table('no_antrian_ruangan')
+        ->where('kodebooking',$request->kodebooking)
+        ->where('waktuperiksa',$request->waktu)
+        ->update([
+            'checkin' => 1,
+        ]);
+
+     
+
+        return response()->json([
+            "response"=>([
+                "metadata"=>([
+                    "message"=>"ok",
+                    "code"=>200
+                ])
+            ])
+                ]);
+
     }
 }

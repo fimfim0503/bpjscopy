@@ -38,6 +38,8 @@ Route::get('user', 'UserController@getAuthenticatedUser')->middleware('jwt.verif
 Route::post('getnoantrian', 'GetNoAntrian@Antrianbpjs')->middleware('jwt.verify');
 Route::post('statusantrian', 'StatusAntrian@statusantrian')->middleware('jwt.verify');
 Route::post('sisaantrian', 'StatusAntrian@sisaantrian')->middleware('jwt.verify');
+Route::post('batalantrian', 'StatusAntrian@batalantrian')->middleware('jwt.verify');
+Route::post('checkin', 'StatusAntrian@checkin')->middleware('jwt.verify');
 Route::post('getrekapantrian', 'Rekapantrian@rekapantrian')->middleware('jwt.verify');
 Route::post('getlistjadwaloperasi', 'UserController@Listjadwaoperasi')->middleware('jwt.verify');
 Route::post('getlistkodebookingoperasi', 'UserController@Kodebookingoperasi')->middleware('jwt.verify');
