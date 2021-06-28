@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Antrian;
 use App\Poli;
+use App\Dokter;
 use App\Operasi;
 use App\Jadwalpoli;
 use App\Referensi;
@@ -84,13 +85,19 @@ class GetNoAntrian extends Controller
             ->select('namapoli')
             ->first();
 
-            //get referensi 
-            $getreferensi=Referensi::where('referensi',$request->jenisreferensi)
-            ->first('referensi');
+            //get nama dokter
 
-            //get request
-            $getrequest=Referensi::where('referensi',$request->jenisrequest)
-            ->first('request');
+            $namadokter = Dokter::where('kodedokter', '=', $request->kodedokter)
+            ->select('namadokter')
+            ->first();
+
+            //get referensi 
+            // $getreferensi=Referensi::where('referensi',$request->jenisreferensi)
+            // ->first('referensi');
+
+            // //get request
+            // $getrequest=Referensi::where('referensi',$request->jenisrequest)
+            // ->first('request');
            
             
         // return response()->json([
@@ -117,7 +124,7 @@ class GetNoAntrian extends Controller
                     "response"=>([
                        
                     ]), "metadata"=>([
-                        "message"=>"Kartu tdak valid",
+                        "message"=>"Kartu tidak valid",
                         "code"=>400
                     ])
                 ]);
@@ -150,24 +157,24 @@ class GetNoAntrian extends Controller
                                 "code"=>400
                             ])
                         ]);
-            }elseif($getreferensi == null ){
-                return response()->json([
-                    "response"=>([
+            // }elseif($getreferensi == null ){
+            //     return response()->json([
+            //         "response"=>([
                        
-                    ]), "metadata"=>([
-                        "message"=>"Referensi tidak sesuai ",
-                        "code"=>400
-                    ])
-                ]);
-            }elseif( $getrequest == null ){
-                return response()->json([
-                    "response"=>([
+            //         ]), "metadata"=>([
+            //             "message"=>"Referensi tidak sesuai ",
+            //             "code"=>400
+            //         ])
+            //     ]);
+            // }elseif( $getrequest == null ){
+            //     return response()->json([
+            //         "response"=>([
                        
-                    ]), "metadata"=>([
-                        "message"=>"Request tidak sesuai",
-                        "code"=>400
-                    ])
-                ]);
+            //         ]), "metadata"=>([
+            //             "message"=>"Request tidak sesuai",
+            //             "code"=>400
+            //         ])
+            //     ]);
             }elseif( $namapoli2 == null ){
                 return response()->json([
                     "response"=>([
@@ -201,15 +208,16 @@ class GetNoAntrian extends Controller
             else {
                 $input=new Antrian;
 
-            $input->kodepoli=$request->kodepoli;
-            $input->tanggalperiksa=$request->tanggalperiksa;
-            $input->jenisrequest=$request->jenisrequest;
             $input->nomorkartu=$request->nomorkartu;
             $input->nik=$request->nik;
-            $input->notelp=$request->notelp;
+            $input->notelp=$request->nohp;
+            $input->kodepoli=$request->kodepoli;
+            $input->norm=$request->norm;
+            $input->tanggalperiksa=$request->tanggalperiksa;
+            $input->kodedokter=$request->kodedokter;
+            $input->jampraktek=$request->jampraktek;
+            $input->jeniskunjungan=$request->jeniskunjungan;
             $input->nomorreferensi=$request->nomorreferensi;
-            $input->jenisreferensi=$request->jenisreferensi;
-            $input->polieksekutif=$request->jenisreferensi;
             $input->kodebooking=Str::random(20);
            
             $timestamps=strtotime($request->tanggalperiksa)*1000;
@@ -217,7 +225,7 @@ class GetNoAntrian extends Controller
         
             //$tanggalcari=Antrian::where('tanggalperiksa',$request->tanggalperiksa)->first();
              $max=Antrian::where('tanggalperiksa','=',$request->tanggalperiksa)->max('waktuperiksa');
-             $jml = $max+1;
+             $jml = $max+7;
             
               $tanggalcari=Antrian::where('tanggalperiksa','=',$request->tanggalperiksa)->first();
             //  return $tanggalcari;
@@ -226,7 +234,7 @@ class GetNoAntrian extends Controller
               
               $input->waktuperiksa= $max + 300000;
             }else{
-              $input->waktuperiksa= $timestamps;
+              $input->waktuperiksa= $timestamps+25200000;
             }
         
               //input kode antrian
@@ -240,18 +248,41 @@ class GetNoAntrian extends Controller
           ->select('namapoli')
           ->get();
           $input->namapoli=$results[0]->namapoli ;
+            
+          //input nama dokter
+          $results = Dokter::where('kodedokter', '=', $request->kodedokter)
+          ->select('namadokter')
+          ->get();
+          $input->namadokter=$results[0]->namadokter ;
+        
+            
+          //get kuota
+          $kuota = Jadwalpoli::where('kodepoli', '=', $request->kodepoli)
+          ->where('namahari','=', $hari)
+          ->select('kuota')
+          ->get();
+         $kuota2=$kuota[0]->kuota;
         
             $input->save();
+
+            $sisajkn=$kuota2 - $input->id;
         
                 return response()->json([
                 "response"=>([
-                    'nomorantrian'=>$input->kodeantri.$input->id,
+                  'nomorantrean'=>$input->kodeantri.$input->id,
+                  'angkaantrean'=>$input->id,
                   'kodebooking'=>$input->kodebooking,
-                  'jenisantrian'=>$input->jenisrequest,
-                  'estimasidilayani'=>$input->waktuperiksa,
-                  'jam praktek' => "07.00 - 16.00",
+                  'pasienbaru'=>0,
+                  'norm'=>$input->norm,
                   'namapoli'=>$input->namapoli,
-                  'namadokter'=>null,
+                  'namadokter'=>$input->namadokter,
+                  'estimasidilayani'=>$input->waktuperiksa,
+                  'sisakuotajkn'=>$sisajkn,
+                  'kuotajkn'=>$kuota2,
+                  'sisakuotanonjkn'=>$sisajkn,
+                  'kuotanonjkn'=>$kuota2,
+                  
+                  'keterangan'=>'peserta harap 60 menit lebih awal guna pencatatan administrasi'
                 ]), "metadata"=>([
                     "message"=>"ok",
                     "code"=>200

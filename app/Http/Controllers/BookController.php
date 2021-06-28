@@ -9,7 +9,9 @@ class BookController extends Controller
 {
     public function book() {
         $data = "Data All Book";
-        return response()->json($data, 200);
+        return response()->json([
+            "message"=>"ok"
+        ], 200);
     }
 
     public function bookAuth() {
