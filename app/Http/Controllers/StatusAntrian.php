@@ -174,12 +174,13 @@ class StatusAntrian extends Controller
         
         //get jumlah keseluruhan antrian
          //get total antrean
-      $max=Antrian::where('tanggalperiksa','=',$tglperiksa2)
+    //sisaantrian
+      $sisaantri=Antrian::where('tanggalperiksa','=',$tglperiksa2)
       ->where('kodepoli','=', $kodepoli2)
+      ->where('statusperiksa','=', 0)
       ->count('NOMOR');
 
-      //sisaantrian
-      $sisaantri=$max - $noantri2;
+      
       
       //getwaktuperiksa
       $waktuperiksa=Antrian::where('kodebooking','=',$kodebooking)
@@ -247,7 +248,7 @@ class StatusAntrian extends Controller
                  "namadokter"=>$namadokter2,
                  "sisaantrean"=> $sisaantri,
                  "antreanpanggil"=>$kodeantri2."-".$antreanpanggil3,
-                 "test"=>$diff->format("%d days, %h hours and %i menit  %s"),
+                 //"test"=>$diff->format("%d days, %h hours and %i menit  %s"),
                   "waktutunggu"=>  $jumlahlamatunggu,
                  "keterangan"=>"",
              ]), "metadata"=>([
