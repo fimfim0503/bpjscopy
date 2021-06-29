@@ -193,12 +193,45 @@ class StatusAntrian extends Controller
       
       //sisawaktutunggu
        
-      $checkTime = strtotime('09:00:59');
-      $time1= date('H:i:s', $checkTime);
+    //   $waktuperiksa3 = strtotime($waktuperiksa2/1000);
+       $waktu2 = strtotime($waktu);
+
       
       
-      $loginTime = strtotime('09:01:00');
-      $diff = $waktu - $loginTime;
+     
+    //    $date->setTimezone(new DateTimeZone('Pacific/Chatham'));
+    
+        $awal  = date("Y:m:d H:i:s") ;
+        $akhir = date("Y:m:d H:i:s", ($waktuperiksa2/1000)); // waktu sekarang
+        
+        $awal1= new DateTime($awal);
+         $akhir1= new DateTime($akhir);
+        
+        //  ->format("%d days, %h hours and %i menit  %s"),
+        //rubah hari ke integer
+         $diff  = date_diff( $akhir1, $awal1 );
+            //untuk merubah hari ke detik
+            $hari=$diff->format("%d");
+            $jumlhhari=intval($hari);
+            $jumlahharikedetik=$jumlhhari*(60*60*24);
+            
+            //untuk merubah jam ke detik
+            $jam=$diff->format("%h");
+            $jumlahjam=intval($jam);
+            $jumlahjamkedetik=$jumlahjam*(60*60);
+            
+            //untuk merubah mentik ke detik
+            $menit=$diff->format("%i");
+            $jumlahmenit=intval($menit);
+            $jumlahmenitkedetik=$jumlahmenit*60;
+            
+            //untuk merubah detik ke integer
+            $detik=$diff->format("%s");
+            $jumlahdetik=intval($detik);
+
+            //jumlah lama tunggu 
+            $jumlahlamatunggu=$jumlahharikedetik+$jumlahjamkedetik+$jumlahmenitkedetik+$jumlahdetik;
+            
       
     
        //get antreanpanggil
@@ -214,8 +247,8 @@ class StatusAntrian extends Controller
                  "namadokter"=>$namadokter2,
                  "sisaantrean"=> $sisaantri,
                  "antreanpanggil"=>$kodeantri2."-".$antreanpanggil3,
-                // "test"=>$waktu,
-                 "waktutunggu"=>$diff,
+                 "test"=>$diff->format("%d days, %h hours and %i menit  %s"),
+                  "waktutunggu"=>  $jumlahlamatunggu,
                  "keterangan"=>"",
              ]), "metadata"=>([
                  "message"=>"ok",
