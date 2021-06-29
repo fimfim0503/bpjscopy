@@ -190,7 +190,7 @@ class UserController extends Controller
          
         $tanggalawal=$request->tanggalawal;
         $tanggalakhir=$request->tanggalakhir;
-        $poli=$request->kodepoli;
+       // $poli=$request->kodepoli;
         
         $data=Operasi::whereBetween('tanggaloperasi', [$tanggalawal, $tanggalakhir])->get();
      //    $poli = Poli::where('kodepoli', '=', $request->kodepoli)
