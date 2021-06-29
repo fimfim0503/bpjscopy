@@ -67,9 +67,9 @@ class StatusAntrian extends Controller
       //get antreanpanggil
       $sisantrian=Antrian::where('tanggalperiksa','=',$tanggalperiksa)
             ->where('kodepoli','=', $kodepoli)
-            ->where('statusperiksa','=','1')
+            ->where('statusperiksa','=',0)
             ->count('NOMOR');
-       $sisantrian2=$max-$sisantrian;
+      
 
        //get antreanpanggil
        $antreanpanggil3=Antrian::where('tanggalperiksa','=',$tanggalperiksa)
@@ -90,15 +90,15 @@ class StatusAntrian extends Controller
         ->get();
        $kuota2=$kuota[0]->kuota;;
 
-       $sisakoutoajkn=$kuota2 - $antreanpanggil3 ;
+       $sisakoutoajkn=$kuota2 - $max ;
 
            return response()->json([
                       "response"=>([
                           "namapoli"=>$getnamapoli,
                           "namadokter"=>$getnamadokter,
                           "totalantrian"=>$max,
-                          "sisaantrean"=> $sisantrian2,
-                          "antreanpanggil"=>$getkodeantre2.$antreanpanggil3,
+                          "sisaantrean"=> $sisantrian,
+                          "antreanpanggil"=>$getkodeantre2."-".$antreanpanggil3,
                            "sisakuotajkn"=>$sisakoutoajkn,
                             "kuotajkn"=>$kuota2,
                            "sisakuotanonjkn"=>$sisakoutoajkn,
